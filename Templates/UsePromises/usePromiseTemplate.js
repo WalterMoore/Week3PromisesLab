@@ -24,17 +24,35 @@ function mapAsync(iterator, obj, context) {
 
 		},*/
 //------------------------
-
+function mapAsyncWithOrder(iterator,array,context,descending) {
+	var initialValue = Promise.resolve([]);
+	if (!Array.isArray(array)){
+		return initialValue;
+	}
+	iterator = iterator.bind(context);
+	var inOrder = function(prevValue,nextValue,nextIndex,array){
+		return prevValue.then(function(items){
+			return iterator(nextValue,nextIndex,array).then(function(moreItems){
+				return items.concat(moreItems);
+			});
+		});
+	}
+	if (descending){
+		return array.reduceRight(inOrder,initialValue);
+	}
+	return array.reduce(inOrder,initialValue);
+}
 
 
 function mapAsyncInOrder(iterator, array, context) {
-	var arr = [];
+	return mapAsyncWithOrder(iterator,array,context,false);
+	/*var arr = [];
 	var n = array.length;
 	for (var i = 0; i < n; i++){
 		var collect = iterator.call(context,array[i],i,array);
 		arr.push(collect);
 	}
-	return Promise.all(arr);
+	return Promise.all(arr);*/
 };
 
 
@@ -52,10 +70,6 @@ function mapAsyncInOrder(iterator, array, context) {
 };*/
 
 function mapAsyncInDescendingOrder(iterator, array, context) {
-	//var arr = array.reduceRight(array.map(iterator));
-	var arr = array.reduceRight(function(previousValue, currentValue, index, collection) {
+	return mapAsyncWithOrder(iterator,array,context,true);
 
-	});
-	
-	return Promise.all(arr);
 };
