@@ -1,13 +1,16 @@
 var APromise = {};
 
-APromise.all = function(promises){
-	return APromise;
+
+APromise.all = function (promises) {
+   return Promise.all(promises);
 };
 
 
-APromise.race = function(promises){
-	
+
+APromise.race = function (promises) {
+   return Promise.race(promises);
 };
+
 
 
 
